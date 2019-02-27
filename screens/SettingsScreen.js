@@ -41,7 +41,7 @@ export default class SettingsScreen extends React.Component {
   }
   
   logout() {
-		//this.props.userStore.logout();
+		this.props.userStore.logout();
 
 		const resetAction = StackActions.reset({
 			index: 0,
@@ -52,38 +52,37 @@ export default class SettingsScreen extends React.Component {
 
   componentDidMount() {
     this.disposes = [
-      // reaction(
-      //   () => this.props.userStore.updateUserSettingState,
-      //   (updateUserSettingState) => {
-      //     if (updateUserSettingState.isSuccessful()) {
-      //     }
-      //   }
-      // ),
+      reaction(
+        () => this.props.userStore.updateUserSettingState,
+        (updateUserSettingState) => {
+          if (updateUserSettingState.isSuccessful()) {
+          }
+        }
+      ),
     ];
 
-    // const geoLocation = this.props.userStore.geoLocationIsEnabled();
-    // const notification = this.props.userStore.notificationIsEnabled();
+
+    const notification = this.props.userStore.notificationIsEnabled();
     
-    // this.setState({
-    //   geoLocation: geoLocation,
-    //   notificaiton: notification
-    // });
+    this.setState({
+      notificaiton: notification
+    });
   }
 
-  onChangeGeoLocation(value) {
-    // this.setState({
-    //     geoLocation: value
-    // }, () => {
-    //   this.props.userStore.updateUserSettings(this.props.userStore.currentUser.user_id, this.state.geoLocation, this.state.notificaiton);
-    // });    
+  componentWillUnmount() {
+    this.disposes.forEach(dispose => dispose());
   }
 
   onChangeNotification(value) {
-    // this.setState({
-    //     notificaiton: value
-    // }, () => {
-    //   this.props.userStore.updateUserSettings(this.props.userStore.currentUser.user_id, this.state.geoLocation, this.state.notificaiton);
-    // });
+    this.setState({
+        notificaiton: value
+    }, () => {
+      this.props.userStore.updateUserSettings(this.props.userStore.currentUser.user_id, this.state.geoLocation, this.state.notificaiton);
+    });
+  }
+
+  termsCondition() {
+    this.props.navigation.navigate('Terms');
   }
 
   render() {
@@ -106,11 +105,12 @@ export default class SettingsScreen extends React.Component {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.rowView}>
-            <Text style={styles.titleText}>Geo Location</Text>
-            <Switch
-             onValueChange = {(value) => this.onChangeGeoLocation(value)}
-             value = {this.state.geoLocation}/>
+          <TouchableOpacity style={styles.rowView} onPress={() => this.termsCondition()}>
+            <Text style={styles.titleText}>Terms & Conditions</Text>
+            <Image 
+              style={{width: 10, height: 19}}
+              source={require('../assets/images/right_arrow_icon.png')}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.rowView}>

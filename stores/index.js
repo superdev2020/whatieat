@@ -2,6 +2,7 @@ import { BASE_URL } from './../constants/API';
 import UserStore from './UserStore';
 import NdaStore from './NdaStore';
 import FoodStore from './FoodStore';
+import SmsStore from './SmsStore';
 
 export class ApiContext {
   session = null;
@@ -52,7 +53,8 @@ const ctx = new ApiContext();
 const stores = {
   userStore: new UserStore(ctx),
   ndaStore: new NdaStore(ctx),
-  foodStore: new FoodStore(ctx)
+  foodStore: new FoodStore(ctx),
+  smsStore: new SmsStore(ctx),
 };
 
 ctx.stores = stores;

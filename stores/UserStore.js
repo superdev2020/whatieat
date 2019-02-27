@@ -45,7 +45,7 @@ export default class UserStore {
 			});
 
 			const data = await loginResponse.json();
-
+			console.log('login data', data);
 			if (data.status) {
 				const user = await data.user;
 				this.currentUser = user;
@@ -213,6 +213,7 @@ export default class UserStore {
 				}
 			});
 
+			console.log('forgotPassword', data);
 			const data = await response.json();
 			if (data.status) {
 				this.forgotPasswordState = new AsyncState('SUCCESS');

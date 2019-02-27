@@ -40,11 +40,11 @@ export default class SignUpScreen extends React.Component {
     super(props)
 
     this.state = {
-      first_name: 'aaa',
-      last_name: 'bbb',
-      email: 'aaaa@gmail.com',
-      password: '123456',
-      confirm_password: '123456',
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: '',
+      confirm_password: '',
       is_loading: false,
       error_message: null,
       device_token: null,

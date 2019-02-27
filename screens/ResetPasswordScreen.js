@@ -46,27 +46,27 @@ export default class ResetPasswordScreen extends React.Component {
 
   componentDidMount() {
     this.disposes = [
-      // reaction(
-      //   () => this.props.userStore.confirmPinState,
-      //   (confirmPinState) => {
-      //     if (confirmPinState.isSuccessful()) {
-      //       const user_id = confirmPinState.value.user_id;
+      reaction(
+        () => this.props.userStore.confirmPinState,
+        (confirmPinState) => {
+          if (confirmPinState.isSuccessful()) {
+            const user_id = confirmPinState.value.user_id;
 
-      //       this.setState({
-      //           is_loading: false
-      //       }, () => {
-      //           this.props.navigation.navigate('ChangePassword', {
-      //             user_id: user_id
-      //           });
-      //       });
-      //     }
-      //     else if(confirmPinState.isNetworkProblems()) {
-      //       this.setState({is_loading: false, error_message: Messages.network_error_message});
-      //     }
-      //     else {
-      //       this.setState({is_loading: false, show_error: true, error_message: confirmPinState.error}); 
-      //     }
-      //   }),
+            this.setState({
+                is_loading: false
+            }, () => {
+                this.props.navigation.navigate('ChangePassword', {
+                  user_id: user_id
+                });
+            });
+          }
+          else if(confirmPinState.isNetworkProblems()) {
+            this.setState({is_loading: false, error_message: Messages.network_error_message});
+          }
+          else {
+            this.setState({is_loading: false, show_error: true, error_message: confirmPinState.error}); 
+          }
+        }),
     ];
 
     const email = this.props.navigation.getParam("email");
@@ -86,7 +86,7 @@ export default class ResetPasswordScreen extends React.Component {
     }
 
     this.setState({ is_loading: true});
-    // this.props.userStore.confirmPin(this.state.email, this.state.pin);
+    this.props.userStore.confirmPin(this.state.email, this.state.pin);
   }
 
   render() {

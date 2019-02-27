@@ -22,7 +22,7 @@ import Messages from './../constants/Messages';
 
 const win = Dimensions.get('window');
 
-@inject("userStore", "ndaStore")
+@inject("userStore", "smsStore")
 @observer
 
 export default class SendProfileScreen extends React.Component {
@@ -36,57 +36,28 @@ export default class SendProfileScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activity_name: '',
-      nda: '',
-      signature: '',
       phone_number: '',
       is_loading: false,
       error_message: null,
       show_result: false,
       home_navigation_name: '',
-      locationResult: null,
-      current_lat: 0,
-      current_lng: 0,
     }
   }
 
   async componentDidMount() {
     this.disposes = [
       reaction(
-        () => this.props.ndaStore.postNDAState,
-        (postNDAState) => {
-          if (postNDAState.isSuccessful()) {
+        () => this.props.smsStore.postSMSState,
+        (postSMSState) => {
+          if (postSMSState.isSuccessful()) {
             this.setState({ show_result: true, is_loading: false });
           }
         }
       ),
     ];
 
-    const activity_name = this.props.navigation.getParam("activity_name");
-    const nda = this.props.navigation.getParam("nda");
-    const signature = this.props.navigation.getParam("signature");
     const home_navigation_name = this.props.navigation.getParam("home_navigation_name");
-
-    const geoLocationEnabled = this.props.userStore.geoLocationIsEnabled();
-
-    if (geoLocationEnabled && this.props.userStore.hasLocationPermissions === true) {
-      let location;
-      try {
-        location = await Location.getCurrentPositionAsync();
-
-        console.log(location);
-
-        this.setState({ current_lat: location.coords.latitude, current_lng: location.coords.longitude });
-      } catch (e) {
-        console.log('geolocation error', e);
-      }
-    }
-
-
     this.setState({
-      activity_name: activity_name,
-      nda: nda,
-      signature: signature,
       home_navigation_name: home_navigation_name
     });
   }
@@ -95,37 +66,24 @@ export default class SendProfileScreen extends React.Component {
     this.disposes.forEach(dispose => dispose());
   }
 
-  onReviewNDA() {
-    this.props.navigation.goBack();
-  }
-
-  onSendNDA() {
+  onSendSMS() {
     const phone_number = this.phone.getValue();
     if (phone_number == null || phone_number.length == 0 || !this.phone.isValidNumber()) {
       this.setState({ error_message: Messages.invalid_phone_message });
       return;
     }
 
-    var lat = 0;
-    var lng = 0;
-
-
     this.setState({ is_loading: true, error_message: null });
-    this.props.ndaStore.postNDA(
+    this.props.smsStore.postSMS(
       this.props.userStore.currentUser.user_id,
-      this.state.activity_name,
-      this.state.nda,
       phone_number,
-      this.state.signature,
-      this.state.current_lat,
-      this.state.current_lng
     );
   }
 
   goToHome() {
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: this.state.home_navigation_name })],
+      actions: [NavigationActions.navigate({ routeName: 'Home_noTransition' })],
     });
     this.props.navigation.dispatch(resetAction);
   }
@@ -146,7 +104,7 @@ export default class SendProfileScreen extends React.Component {
           </View>
 
           <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-            <RoundButton style={styles.button} title="SEND PROFILE" floatSize={true} isLoading={this.state.is_loading} onPress={() => this.onSendNDA()}></RoundButton>
+            <RoundButton style={styles.button} title="SEND PROFILE" floatSize={true} isLoading={this.state.is_loading} onPress={() => this.onSendSMS()}></RoundButton>
             {
               this.state.error_message
                 ? <Text style={styles.errorMessage}>{this.state.error_message}</Text>
@@ -157,7 +115,7 @@ export default class SendProfileScreen extends React.Component {
         {
           this.state.show_result
             ? Alert.alert(
-              'NDA is posted successfully!!!',
+              'Your profile is sent successfully!!!',
               '',
               [
                 { text: 'OK', onPress: () => this.goToHome() },

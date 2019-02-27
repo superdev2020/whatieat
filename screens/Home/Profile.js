@@ -78,7 +78,7 @@ export default class Profile extends React.Component {
 				</View>
 				
 				<View style={styles.foodWrapper}>
-					<Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 16, zIndex: 0, marginBottom: 16}}>Jone Doe</Text>
+					<Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 16, zIndex: 0, marginBottom: 16}}>{this.props.userStore.currentUser.first_name + ' ' + this.props.userStore.currentUser.last_name}</Text>
 					<View style={{justifyContent: 'center', flex: 1, flexDirection: 'row', alignItems: 'center'}}>
 						<View style={{marginTop: 10, backgroundColor: 'white', flexDirection: 'row', flexWrap: 'wrap', justfiyContent: 'space-between'}}>
 						{

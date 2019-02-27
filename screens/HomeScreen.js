@@ -1,10 +1,7 @@
 import React from 'react';
 import {
 	Image,
-	Platform,
-	ScrollView,
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	Dimensions,
 	View,
@@ -17,22 +14,11 @@ import Profile from './Home/Profile';
 
 import { Constants } from 'expo';
 import { NavigationActions, StackActions } from 'react-navigation';
-import ListPage from './Home/ListPage';
-import HistoryPage from './Home/HistoryPage';
-import SettingsPage from './Home/SettingsPage';
-import { reaction } from "mobx";
 import { inject, observer } from "mobx-react/native";
 import LabelText from '../components/LabelText';
 
 const win = Dimensions.get('window');
 
-
-const FirstRoute = () => (
-  <View style={[styles.scene, { backgroundColor: '#ff4081' }]} />
-);
-const SecondRoute = () => (
-  <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
-);
 
 @inject("userStore")
 @observer
@@ -102,6 +88,8 @@ export default class HomeScreen extends React.Component {
 	changePassword() {
 		this.props.navigation.navigate('ChangePassword');
 	}
+
+	
 
 	logout() {
 		this.props.userStore.logout();

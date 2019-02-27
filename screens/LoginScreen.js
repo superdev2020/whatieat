@@ -38,8 +38,8 @@ export default class LoginScreen extends React.Component {
     super(props)
 
     this.state = {
-      email: 'zhi@gad.ai',
-      password: '123456',
+      email: '',
+      password: '',
       remember: false,
       is_loading: false,
       error_message: null,
