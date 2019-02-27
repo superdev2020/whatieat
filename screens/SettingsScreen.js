@@ -20,7 +20,7 @@ export default class SettingsScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Settings',
+      title: 'Settings'.toUpperCase(),
     }
   };
 

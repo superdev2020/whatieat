@@ -2,26 +2,71 @@
 import * as React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import RoundButton from './../../components/RoundButton';
+import { reaction } from "mobx";
+import { inject, observer } from "mobx-react/native";
+import { BASE_URL } from '../../constants/API';
 
-import { PREFERENCES } from '../../constants/Mockup';
+import { _allowStateChangesInsideComputed } from 'mobx';
 
+@inject("userStore", "foodStore")
+@observer
 export default class Profile extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.navigation = props.route.navigation;
+		this.state = {
+			data: []
+		}
+	}
+
+	componentDidMount() {
+    this.disposes = [
+      reaction(
+				() => this.props.foodStore.getCategoryListState,
+				(getCategoryListState) => {
+					if (getCategoryListState.isSuccessful()) {
+						this.setState({data: this.props.foodStore.categories});
+					}
+				}
+			),
+    ];
+		this.props.foodStore.loadCategoryList(this.props.userStore.currentUser.user_id);
+  }
+
+  componentWillUnmount() {
+    this.disposes.forEach(dispose => dispose());
+  }
+
+	_clickCat(cat) {
+
+		this.navigation.navigate('SelectFoods', {
+			cat: cat
+		});
+	}
+
 	_renderCategory = (cat) => {
+
+		//return null;
+		const uri = `${BASE_URL}images/${cat.icon}`;
+		
 		return (
-			<View key={cat.cat_name} style={[styles.catItem]}>
+			<TouchableOpacity key={cat.category_id} style={[styles.catItem]} onPress={() => {this._clickCat(cat)}}>
 				<View style={{justifyContent: 'center', alignItems: 'center'}}>
-					<Image style={styles.image} source={cat.image} resizeMode="cover" />
+					<Image style={styles.image} source={{uri: uri}} resizeMode="cover" />
 					<View style={styles.badge}>
-						<Text style={{color: 'white'}}>{cat.selected}</Text>
+						<Text style={{color: 'white'}}>{cat.selected == null ? 0 : cat.selected}</Text>
 					</View>
-					<Text style={[styles.catName]}>{cat.cat_name.toUpperCase()}</Text>
+					<Text style={[styles.catName]}>{cat.name.toUpperCase()}</Text>
 				</View>
-			</View>
+			</TouchableOpacity>
 		);
 	};
 
 	render() {
+
+		const avatar = `${BASE_URL}${this.props.userStore.currentUser.avatar}?time=` + new Date().valueOf();
+		console.log('avatar', avatar);
 		return (
 			<ScrollView
 				style={styles.container}
@@ -29,7 +74,7 @@ export default class Profile extends React.Component {
 			>
 			<View style={styles.profileWrapper}>
 				<View style={styles.avatarWrapper}>
-					<Image style={styles.avatar} source={require('../../assets/images/avatar.png')}/>
+					<Image style={styles.avatar} source={{uri: avatar}}/>
 				</View>
 				
 				<View style={styles.foodWrapper}>
@@ -37,14 +82,17 @@ export default class Profile extends React.Component {
 					<View style={{justifyContent: 'center', flex: 1, flexDirection: 'row', alignItems: 'center'}}>
 						<View style={{marginTop: 10, backgroundColor: 'white', flexDirection: 'row', flexWrap: 'wrap', justfiyContent: 'space-between'}}>
 						{
-							PREFERENCES.map((cat, i) => (
+							this.state.data.map((cat, i) => (
 								this._renderCategory(cat, i)
 							))
+							//console.log('this.state.data', this.state.data)
 						}
 						</View>
 					</View>
 					<TouchableOpacity>
-						<RoundButton theme="theme2" style={styles.sendButton} title="SEND PROFILE VIA SMS"  onPress={() => {}}></RoundButton>
+						<RoundButton theme="theme2" style={styles.sendButton} title="SEND PROFILE VIA SMS"  onPress={() => {
+							this.navigation.navigate('SendProfile');
+						}}></RoundButton>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -89,10 +137,10 @@ const styles = StyleSheet.create({
 		zIndex: 1000,
 		position: 'relative',
 		top: 0,
-		elevation: 20,
-		shadowOffset: { width: 50, height: 50 },
+		elevation: 8,
+		shadowOffset: { width: 5, height: 5 },
 		shadowOpacity: 1,
-		shadowRadius: 50,
+		shadowRadius: 5,
 	},
 
 	avatar: {
@@ -106,10 +154,10 @@ const styles = StyleSheet.create({
 		// borderWidth: 1, borderColor: '#ebebeb', 
 		justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', 
 		marginLeft: 20, marginRight: 20, paddingLeft: 10, paddingRight: 10,
-		shadowOffset: { width: 50, height: 50 },
+		shadowOffset: { width: 8, height: 8 },
 		shadowOpacity: 1,
 		shadowRadius: 50,
-		elevation: 20,
+		elevation: 8,
 		borderWidth: 1,
 		borderColor: '#ebebeb',
 		zIndex: 0,

@@ -1,6 +1,7 @@
 import { BASE_URL } from './../constants/API';
 import UserStore from './UserStore';
 import NdaStore from './NdaStore';
+import FoodStore from './FoodStore';
 
 export class ApiContext {
   session = null;
@@ -51,6 +52,7 @@ const ctx = new ApiContext();
 const stores = {
   userStore: new UserStore(ctx),
   ndaStore: new NdaStore(ctx),
+  foodStore: new FoodStore(ctx)
 };
 
 ctx.stores = stores;

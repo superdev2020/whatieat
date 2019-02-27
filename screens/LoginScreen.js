@@ -38,8 +38,8 @@ export default class LoginScreen extends React.Component {
     super(props)
 
     this.state = {
-      email: '',
-      password: '',
+      email: 'zhi@gad.ai',
+      password: '123456',
       remember: false,
       is_loading: false,
       error_message: null,
@@ -49,36 +49,36 @@ export default class LoginScreen extends React.Component {
 
   componentDidMount() {
     this.disposes = [
-      // reaction(
-      //   () => this.props.userStore.restoreUserState,
-      //   (restoreUserState) => {
-      //     if (restoreUserState.isSuccessful()) {
-      //       this.props.navigation.navigate('Home_noTransition', {
-      //         navigation_name: 'Home_noTransition',
-      //       });
-      //     }
-      //   }
-      // ),
+      reaction(
+        () => this.props.userStore.restoreUserState,
+        (restoreUserState) => {
+          if (restoreUserState.isSuccessful()) {
+            this.props.navigation.navigate('Home_noTransition', {
+              navigation_name: 'Home_noTransition',
+            });
+          }
+        }
+      ),
 
-      // reaction(
-      //   () => this.props.userStore.loginState,
-      //   (loginState) => {
-      //     if (loginState.isSuccessful()) {
-      //       this.setState({
-      //           is_loading: false, remember: false, email: '', password: ''
-      //       }, () => {
-      //           this.props.navigation.navigate('Home', {
-      //             navigation_name: 'Home',
-      //           });
-      //       });
-      //     }
-      //     else if(loginState.isNetworkProblems()) {
-      //       this.setState({is_loading: false, error_message: Messages.network_error_message});
-      //     }
-      //     else {
-      //       this.setState({is_loading: false, show_error: true, error_message: loginState.error}); 
-      //     }
-      //   }),
+      reaction(
+        () => this.props.userStore.loginState,
+        (loginState) => {
+          if (loginState.isSuccessful()) {
+            this.setState({
+                is_loading: false, remember: false, email: '', password: ''
+            }, () => {
+                this.props.navigation.navigate('Home', {
+                  navigation_name: 'Home',
+                });
+            });
+          }
+          else if(loginState.isNetworkProblems()) {
+            this.setState({is_loading: false, error_message: Messages.network_error_message});
+          }
+          else {
+            this.setState({is_loading: false, show_error: true, error_message: loginState.error}); 
+          }
+        }),
     ];
 
     this.props.userStore.restoreUser();
@@ -148,9 +148,9 @@ export default class LoginScreen extends React.Component {
   onLogin() {
     if (this.state.is_loading) return;
 
-    this.props.navigation.navigate('Home_noTransition', {
-      navigation_name: 'Home_noTransition',
-    });
+    // this.props.navigation.navigate('Home_noTransition', {
+    //   navigation_name: 'Home_noTransition',
+    // });
 
     if (this.state.email == null || this.state.email == "") {
       this.setState({ error_message: Messages.invalid_email_message });
@@ -164,8 +164,8 @@ export default class LoginScreen extends React.Component {
 
     
 
-    // this.setState({ is_loading: true});
-    // this.props.userStore.login(this.state.email, this.state.password, this.state.remember, this.state.device_token);
+    this.setState({ is_loading: true});
+    this.props.userStore.login(this.state.email, this.state.password, this.state.remember, this.state.device_token);
   }
 
   render() {

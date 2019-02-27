@@ -29,7 +29,7 @@ export default class ResetPasswordScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const {state} = navigation;
     return {
-      title: 'Reset Password',
+      title: 'Reset Password'.toUpperCase(),
     }
   };
 

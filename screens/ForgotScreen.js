@@ -27,7 +27,7 @@ export default class ForgotScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const {state} = navigation;
     return {
-      title: 'Forgot Password',
+      title: 'Forgot Password'.toUpperCase(),
     }
   };
 

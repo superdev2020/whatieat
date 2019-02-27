@@ -11,6 +11,7 @@ import {
   View
 } from 'react-native';
 
+import PhoneInput from 'react-native-phone-input'
 import LabelText from './../components/LabelText';
 import ButtonText from './../components/ButtonText';
 import RoundButton from './../components/RoundButton';
@@ -31,7 +32,7 @@ export default class SignUpScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { state } = navigation;
     return {
-      title: 'Sign Up',
+      title: 'Sign Up'.toUpperCase(),
     }
   };
 
@@ -39,14 +40,15 @@ export default class SignUpScreen extends React.Component {
     super(props)
 
     this.state = {
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: '',
-      confirm_password: '',
+      first_name: 'aaa',
+      last_name: 'bbb',
+      email: 'aaaa@gmail.com',
+      password: '123456',
+      confirm_password: '123456',
       is_loading: false,
       error_message: null,
       device_token: null,
+      agree: false
     }
   }
 
@@ -98,7 +100,8 @@ export default class SignUpScreen extends React.Component {
       return;
     }
 
-    if (this.state.phone == null || this.state.phone == "") {
+    const phone_number = this.phone.getValue();
+    if (phone_number == null || phone_number.length == 0 || !this.phone.isValidNumber()) {
       this.setState({ error_message: Messages.invalid_phone_message });
       return;
     }
@@ -114,7 +117,7 @@ export default class SignUpScreen extends React.Component {
     }
 
     this.setState({ is_loading: true, error_message: null });
-    this.props.userStore.signUp(this.state.first_name, this.state.last_name, this.state.email, this.state.password, this.state.device_token);
+    this.props.userStore.signUp(this.state.first_name, this.state.last_name, this.state.email, this.state.password, phone_number, this.state.device_token);
   }
 
   render() {
@@ -132,19 +135,22 @@ export default class SignUpScreen extends React.Component {
             </View>
 
             <FormInput type="email" style={{ marginBottom: 15 }} hasIcon={false} placeholder="Email" value={this.state.email} onChangeText={(text) => this.setState({ email: text, error_message: null })} />
-            <FormInput type="text" style={{ marginBottom: 15 }} hasIcon={false} placeholder="Phone" value={this.state.phone} onChangeText={(text) => this.setState({ phone: text, error_message: null })} />
+            <PhoneInput style={styles.phoneInput} textStyle={styles.phoneTextStyle} ref={(ref) => {this.phone = ref;}}/>
             <FormInput type="password" style={{ marginBottom: 15 }} hasIcon={false} placeholder="Password" value={this.state.password} onChangeText={(text) => this.setState({ password: text, error_message: null })} />
             <FormInput type="password" hasIcon={false} placeholder="Confirm Password" value={this.state.confirm_password} onChangeText={(text) => this.setState({ confirm_password: text, error_message: null })} />
 
 
             <View style={styles.bottomView}>
               <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                <View style={styles.terms} onPress={() => {}}>
+                <View style={styles.terms}>
+                  <TouchableOpacity onPress={() => this.setState({agree: !this.state.agree})}>
                   {
-                    this.state.remember
+                    this.state.agree
                       ? <Image style={styles.checkmark} source={require('./../assets/images/checkmark.png')} />
                       : <Image style={styles.checkmark} source={require('./../assets/images/checkmark_empty.png')} />
                   }
+                  </TouchableOpacity>
+                  
 
                   <View style={styles.termsText}>
                     <LabelText style={styles.labelText}>I agree to the</LabelText>
@@ -180,6 +186,23 @@ const styles = StyleSheet.create({
     // marginTop: 0
     alignItems: 'center',
     paddingTop: 30,
+  },
+
+  phoneInput: {
+    fontFamily: 'opensans-regular',
+    color: '#8b8b8b',
+    marginTop: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10,
+    
+  },
+
+  phoneTextStyle: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e5',
+    height: 25,
+    paddingBottom: 5
   },
 
   terms: {

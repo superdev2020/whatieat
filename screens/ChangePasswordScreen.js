@@ -28,7 +28,7 @@ export default class ChangePasswordScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const {state} = navigation;
     return {
-      title: 'Change Password',
+      title: 'Change Password'.toUpperCase(),
     }
   };
   constructor(props) {
@@ -57,36 +57,36 @@ export default class ChangePasswordScreen extends React.Component {
 
   componentDidMount() {
     this.disposes = [
-      // reaction(
-      //   () => this.props.userStore.changePasswordState,
-      //   (changePasswordState) => {
-      //     if (changePasswordState.isSuccessful()) {
-      //       this.setState({is_loading: false}, () => {
-      //           Alert.alert(
-      //             '',
-      //             'Password has been changed successfully!',
-      //             [
-      //               {text: 'OK', onPress: () => this.onPressOk()},
-      //             ],
-      //             { cancelable: false }
-      //           )
+      reaction(
+        () => this.props.userStore.changePasswordState,
+        (changePasswordState) => {
+          if (changePasswordState.isSuccessful()) {
+            this.setState({is_loading: false}, () => {
+                Alert.alert(
+                  '',
+                  'Password has been changed successfully!',
+                  [
+                    {text: 'OK', onPress: () => this.onPressOk()},
+                  ],
+                  { cancelable: false }
+                )
 
-      //       });
-      //     }
-      //     else if(changePasswordState.isNetworkProblems()) {
-      //       this.setState({is_loading: false, error_message: Messages.network_error_message});
-      //     }
-      //     else {
-      //       this.setState({is_loading: false, show_error: true, error_message: changePasswordState.error}); 
-      //     }
-      //   }),
+            });
+          }
+          else if(changePasswordState.isNetworkProblems()) {
+            this.setState({is_loading: false, error_message: Messages.network_error_message});
+          }
+          else {
+            this.setState({is_loading: false, show_error: true, error_message: changePasswordState.error}); 
+          }
+        }),
     ];
 
     const user_id = this.props.navigation.getParam("user_id");
     if (user_id) {
       this.setState({user_id: user_id, forgot: true});  
     } else {
-      // this.setState({user_id: this.props.userStore.currentUser.user_id, forgot: false});  
+      this.setState({user_id: this.props.userStore.currentUser.user_id, forgot: false});  
     }    
   }
 
@@ -107,8 +107,8 @@ export default class ChangePasswordScreen extends React.Component {
       return;
     }
 
-    // this.setState({ is_loading: true});
-    // this.props.userStore.changePassword(this.state.user_id, this.state.password, this.state.new_password, this.state.forgot);
+    this.setState({ is_loading: true});
+    this.props.userStore.changePassword(this.state.user_id, this.state.password, this.state.new_password, this.state.forgot);
   }
 
   render() {

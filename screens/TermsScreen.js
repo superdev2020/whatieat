@@ -8,7 +8,7 @@ export default class ForgotScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const {state} = navigation;
     return {
-      title: 'Terms & Conditions',
+      title: 'Terms & Conditions'.toUpperCase(),
     }
   };
   constructor(props) {

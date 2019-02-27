@@ -74,8 +74,8 @@ export default class HomeScreen extends React.Component {
 			navigation_name: '',
 			index: 0,
 			routes: [
-				{ key: 'preference', title: 'Food Preferences' },
-				{ key: 'profile', title: 'Profile' },
+				{ key: 'preference', title: 'Food Preferences', navigation: this.props.navigation },
+				{ key: 'profile', title: 'My Profile', navigation: this.props.navigation },
 			],
 		}
 	}

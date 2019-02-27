@@ -1,21 +1,57 @@
 import * as React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity} from 'react-native';
+import { reaction } from "mobx";
+import { inject, observer } from "mobx-react/native";
 import { PREFERENCES } from '../../constants/Mockup';
+import { BASE_URL } from '../../constants/API';
 
 const win = Dimensions.get('window');
+
+
+
+@inject("userStore", "foodStore")
+@observer
 export default class Preference extends React.Component {
 
 
+	constructor(props) {
+		super(props);
+		this.navigation = props.route.navigation;
+		this.state = {
+			data: []
+		}
+	}
+
+	componentDidMount() {
+    this.disposes = [
+      reaction(
+				() => this.props.foodStore.getFoodListState,
+				(getFoodListState) => {
+					if (getFoodListState.isSuccessful()) {
+						this.setState({data: this.props.foodStore.lists});
+					}
+				}
+			),
+    ];
+		this.props.foodStore.loadFoodList(this.props.userStore.currentUser.user_id);
+  }
+
+  componentWillUnmount() {
+    this.disposes.forEach(dispose => dispose());
+  }
+
 	_renderFood = (item, i) => {
+		if( i > 2)
+			return null;
+		const uri = `${BASE_URL}images/${item.icon}`;
 		return (
-			<View key={item.name} style={[styles.foodOutWrapper]}>
+			<View key={item.food_id} style={[styles.foodOutWrapper]}>
 				<View style={styles.foodInnerWrapper}>
-					<Image style={styles.image} source={item.image} resizeMode="cover" /> 
+					<Image style={styles.image} source={{uri: uri}} resizeMode="cover" /> 
 					<View style={[styles.food, {width: '100%'}]}>
 						<Text style={[styles.footName]}>{item.name}</Text>
 					</View>
 				</View>
-				
 			</View>
 		);
 	}
@@ -25,17 +61,26 @@ export default class Preference extends React.Component {
 
 	_renderCategory = (cat) => {
 		return (
-			cat.foods.length == 0 
+			(cat.selected == 0 || cat.foods.length == 0)
 			? null
-			: <View key={cat.cat_name} style={styles.row}>
+			: <View key={cat.cat_id} style={styles.row}>
 					<View style={styles.catTitle}>
 						<Text style={{ fontWeight: 'bold', fontSize: 13 }}>{cat.cat_name}<Text style={{ fontWeight: 'normal' }}> | {cat.selected} Selected out of {cat.total} </Text></Text>
-						<TouchableOpacity><Text style={{ color: '#ef9149', fontSize: 13 }}>SEE ALL</Text></TouchableOpacity>
+						{
+							cat.selected > 3
+							? <TouchableOpacity onPress={() => {
+								this.navigation.navigate('SeeAll', {
+									cat: cat
+								});
+							}}><Text style={{ color: '#ef9149', fontSize: 13 }}>SEE ALL</Text></TouchableOpacity>
+							: null
+						}
+						
 					</View>
 					<View style={styles.imageGroup}>
 						{
 							cat.foods.map((food, i) => (
-								this._renderFood(food, i)
+								food.f_id == null ? null : this._renderFood(food, i)
 							))
 						}
 					</View>
@@ -50,7 +95,7 @@ export default class Preference extends React.Component {
 			>
 				<View style={{marginTop: 10}}>
 				{
-					PREFERENCES.map((source, i) => (
+					this.state.data.map((source, i) => (
 						this._renderCategory(source)
 					))
 				}
